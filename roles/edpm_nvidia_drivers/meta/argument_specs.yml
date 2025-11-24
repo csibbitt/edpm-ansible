@@ -21,10 +21,6 @@ argument_specs:
         description: |
           Custom NVIDIA driver URL (if set, driver will be installed from this URL instead of NVIDIA repo).
           Must end with .rpm or .run extension.
-      edpm_nvidia_drivers_force_host_mode:
-        type: bool
-        default: false
-        description: Whether to force host mode (host drivers don't include CUDA)
       edpm_nvidia_drivers_cleanup_temp_files:
         type: bool
         default: true
@@ -49,17 +45,7 @@ argument_specs:
         type: bool
         default: true
         description: Whether to install NVIDIA Management Library RPM
-      edpm_nvidia_drivers_management_library_package_name:
-        type: str
-        default: "libnvidia-ml"
-        description: Package name for NVIDIA Management Library
       edpm_nvidia_drivers_blacklist_nouveau:
         type: bool
         default: true
         description: Whether to blacklist nouveau driver
-      edpm_nvidia_drivers_force_install:
-        type: bool
-        default: false
-        description: |
-          Whether to force install NVIDIA driver even if already installed.
-          NOTE: THIS IS FOR DEBUGGING ONLY AND IS NOT EXPECTED TO WORK (yet?)

@@ -1,8 +1,4 @@
 ---
-- name: Set driver mode (default to guest mode)
-  ansible.builtin.set_fact:
-    _edpm_nvidia_drivers_is_host_mode: "{{ edpm_nvidia_drivers_force_host_mode | bool }}"
-
 - name: Deal with nouveau driver
   when: edpm_nvidia_drivers_blacklist_nouveau | bool
   become: true
@@ -52,11 +48,6 @@
     - name: Extract filename from URL
       ansible.builtin.set_fact:
         _edpm_nvidia_drivers_filename: "{{ edpm_nvidia_drivers_url.split('/')[-1] }}"
-
-    - name: Determine driver mode from filename or force_host_mode
-      ansible.builtin.set_fact:
-        _edpm_nvidia_drivers_is_host_mode: >-
-          {{ (edpm_nvidia_drivers_force_host_mode | bool) or ('host' in _edpm_nvidia_drivers_filename | lower) }}
 
     - name: Check if custom driver URL has allowable extension
       ansible.builtin.assert:

@@ -14,7 +14,6 @@
   when:
     - edpm_nvidia_drivers_generate_cdi_config | bool
     - not _edpm_nvidia_drivers_cdi_config_file.stat.exists
-    - not (_edpm_nvidia_drivers_is_host_mode | bool)
   become: true
   block:
     - name: Ensure CDI directory exists
