@@ -1,0 +1,134 @@
+---
+- name: Set driver mode (default to guest mode)
+  ansible.builtin.set_fact:
+    _edpm_nvidia_drivers_is_host_mode: "{{ edpm_nvidia_drivers_force_host_mode | bool }}"
+
+- name: Deal with nouveau driver
+  when: edpm_nvidia_drivers_blacklist_nouveau | bool
+  become: true
+  block:
+    - name: Blacklist nouveau kernel module
+      ansible.builtin.blockinfile:
+        block: |
+          blacklist nouveau
+        path: /etc/modprobe.d/blacklist.conf
+        mode: "0644"
+        create: true
+
+    - name: Remove nouveau kernel module if loaded
+      ansible.builtin.command: modprobe -r nouveau
+      failed_when: false
+      changed_when: false
+
+- name: Add EPEL repository for DKMS support (if needed)
+  become: true
+  ansible.builtin.yum_repository:
+    name: epel
+    description: EPEL YUM repo
+    baseurl: https://download.fedoraproject.org/pub/epel/9/Everything/$basearch/
+    enabled: 1
+    gpgcheck: 1
+    gpgkey: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-9
+  when: "'dkms' in edpm_nvidia_drivers_module_version"  
+
+- name: Install NVIDIA drivers from repository
+  when: edpm_nvidia_drivers_url == ""
+  become: true
+  block:
+    - name: Install main NVIDIA driver module from repository
+      ansible.builtin.dnf:
+        name: "@nvidia-driver:{{ edpm_nvidia_drivers_module_version }}"
+        state: present
+
+    - name: Install the nvidia CUDA driver
+      ansible.builtin.dnf:
+        name: cuda-drivers
+        state: present
+      when: edpm_nvidia_drivers_install_cuda_drivers | bool
+
+- name: Install NVIDIA driver from custom URL
+  when: edpm_nvidia_drivers_url != ""
+  block:
+    - name: Extract filename from URL
+      ansible.builtin.set_fact:
+        _edpm_nvidia_drivers_filename: "{{ edpm_nvidia_drivers_url.split('/')[-1] }}"
+
+    - name: Determine driver mode from filename or force_host_mode
+      ansible.builtin.set_fact:
+        _edpm_nvidia_drivers_is_host_mode: >-
+          {{ (edpm_nvidia_drivers_force_host_mode | bool) or ('host' in _edpm_nvidia_drivers_filename | lower) }}
+
+    - name: Check if custom driver URL has allowable extension
+      ansible.builtin.assert:
+        that: _edpm_nvidia_drivers_filename | regex_search('\\.(rpm|run)$') is not none
+        fail_msg: "edpm_nvidia_drivers_url must end with .rpm or .run extension. Current URL: {{ edpm_nvidia_drivers_url }}"
+
+    - name: Create temporary directory for driver download
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: nvidia_driver
+      register: _edpm_nvidia_drivers_temp_dir
+
+    - name: Set temporary file path
+      ansible.builtin.set_fact:
+        _edpm_nvidia_drivers_temp_path: "{{ _edpm_nvidia_drivers_temp_dir.path }}/{{ _edpm_nvidia_drivers_filename }}"
+
+    - name: Check if custom driver URL is a .run file
+      ansible.builtin.set_fact:
+        _edpm_nvidia_drivers_is_run_file: "{{ _edpm_nvidia_drivers_filename | regex_search('\\.run$') is not none }}"
+
+    - name: Download NVIDIA driver from custom URL
+      ansible.builtin.get_url:
+        url: "{{ edpm_nvidia_drivers_url }}"
+        dest: "{{ _edpm_nvidia_drivers_temp_path }}"
+        mode: "{{ '0755' if _edpm_nvidia_drivers_is_run_file else '0644' }}"
+        validate_certs: false
+
+    - name: Install NVIDIA driver from RPM
+      when: not _edpm_nvidia_drivers_is_run_file
+      become: true
+      ansible.builtin.dnf:
+        name: "{{ _edpm_nvidia_drivers_temp_path }}"
+        state: present
+        disable_gpg_check: true
+
+
+
+    - name: Install NVIDIA driver from .run file
+      when: _edpm_nvidia_drivers_is_run_file
+      block:
+        - name: Get running kernel version
+          ansible.builtin.command: uname -r
+          register: _edpm_nvidia_drivers_kernel_version_result
+          changed_when: false
+
+        - name: Set kernel version fact
+          ansible.builtin.set_fact:
+            _edpm_nvidia_drivers_kernel_version: "{{ _edpm_nvidia_drivers_kernel_version_result.stdout | replace('.x86_64', '') }}"
+
+        - name: Install dependencies for .run driver installation
+          become: true
+          ansible.builtin.dnf:
+            name:
+              - pciutils
+              - gcc
+              - "kernel-headers-{{ _edpm_nvidia_drivers_kernel_version }}"
+              - "kernel-devel-{{ _edpm_nvidia_drivers_kernel_version }}"
+            state: present
+
+        - name: Execute .run file
+          become: true
+          ansible.builtin.command: "{{ _edpm_nvidia_drivers_temp_path }} --no-dkms --no-disable-nouveau --silent"
+          args:
+            creates: /usr/bin/nvidia-smi
+
+    - name: Clean up temporary directory
+      ansible.builtin.file:
+        path: "{{ _edpm_nvidia_drivers_temp_dir.path }}"
+        state: absent
+      when: edpm_nvidia_drivers_cleanup_temp_files | bool
+
+- name: Refresh package facts after driver installation
+  ansible.builtin.package_facts:
+    manager: rpm
+

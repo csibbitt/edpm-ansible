@@ -1,0 +1,41 @@
+---
+- name: Add nvidia repo (standard installation)
+  when: edpm_nvidia_drivers_url == ""
+  become: true
+  ansible.builtin.yum_repository:
+    name: nvidia-cuda-rhel
+    description: NVIDIA CUDA repo for RHEL
+    baseurl: "{{ edpm_nvidia_drivers_repo_url }}/$basearch/"
+    gpgcheck: true
+    gpgkey: "{{ edpm_nvidia_drivers_repo_url }}/$basearch/D42D0685.pub"
+
+- name: Add nvidia repo (with exclusions for custom URL)
+  when: edpm_nvidia_drivers_url != ""
+  become: true
+  ansible.builtin.yum_repository:
+    name: nvidia-cuda-rhel
+    description: NVIDIA CUDA repo for RHEL
+    baseurl: "{{ edpm_nvidia_drivers_repo_url }}/$basearch/"
+    gpgcheck: true
+    gpgkey: "{{ edpm_nvidia_drivers_repo_url }}/$basearch/D42D0685.pub"
+    exclude: nvidia-kmod-common
+
+- name: Check for installed nvidia-driver RPM
+  ansible.builtin.package_facts:
+    manager: rpm
+
+- name: Check if nvidia-driver installation is needed
+  ansible.builtin.set_fact:
+    _edpm_nvidia_drivers_already_installed: "{{ 'nvidia-driver' in ansible_facts.packages or 'NVIDIA-vGPU-rhel-aie' in ansible_facts.packages }}"
+
+- name: Driver installation
+  ansible.builtin.import_tasks: drivers.yaml
+  when: (not (_edpm_nvidia_drivers_already_installed | bool)) or (edpm_nvidia_drivers_force_install | bool)
+
+- name: Install Container Tools
+  ansible.builtin.include_tasks: container_tools.yaml
+  when: edpm_nvidia_drivers_install_container_tools | bool
+
+- name: Install Management Library
+  ansible.builtin.import_tasks: management_library.yaml
+  when: edpm_nvidia_drivers_install_management_library | bool

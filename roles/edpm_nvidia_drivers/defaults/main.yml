@@ -1,0 +1,34 @@
+---
+# NVIDIA repository URL
+edpm_nvidia_drivers_repo_url: "https://developer.download.nvidia.com/compute/cuda/repos/rhel9/"
+
+# NVIDIA Driver module version to install from NVIDIA repo
+edpm_nvidia_drivers_module_version: "latest-dkms"
+
+# Custom NVIDIA driver URL (if set, driver will be installed from this URL instead of NVIDIA repo)
+edpm_nvidia_drivers_url: ""
+
+# Whether to force host mode (host drivers don't include CUDA)
+edpm_nvidia_drivers_force_host_mode: false
+
+# Whether to cleanup temporary files
+edpm_nvidia_drivers_cleanup_temp_files: true
+
+# Whether to install CUDA drivers (cuda-drivers package)
+edpm_nvidia_drivers_install_cuda_drivers: true
+
+# Whether to install NVIDIA Container Tools RPM
+edpm_nvidia_drivers_install_container_tools: true
+edpm_nvidia_drivers_container_tools_version_release: "1.17.8-1"
+edpm_nvidia_drivers_generate_cdi_config: true
+
+# Whether to install NVIDIA Management Library RPM
+edpm_nvidia_drivers_install_management_library: true
+edpm_nvidia_drivers_management_library_package_name: "libnvidia-ml"
+
+# Whether to blacklist nouveau driver
+edpm_nvidia_drivers_blacklist_nouveau: true
+
+# Whether to force install NVIDIA driver (NOTE: THIS IS FOR DEBUGGING ONLY AND IS NOT EXPECTED TO WORK [yet?])
+edpm_nvidia_drivers_force_install: false
+

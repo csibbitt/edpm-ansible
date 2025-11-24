@@ -45,3 +45,4 @@ docs/source/collections/**
 docs_build
 Gemfile.lock
 .ruby
+.cursor

@@ -1,0 +1,8 @@
+---
+- name: Install NVIDIA Management Library RPM
+  become: true
+  ansible.builtin.dnf:
+    name: "{{ edpm_nvidia_drivers_management_library_package_name }}"
+    state: present
+  when: "'NVIDIA-vGPU-rhel-aie' not in ansible_facts.packages"
+
