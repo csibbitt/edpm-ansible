@@ -31,16 +31,22 @@
   when: edpm_nvidia_drivers_url == ""
   become: true
   block:
-    - name: Install main NVIDIA driver module from repository
+    - name: Enable NVIDIA driver DNF module for selected version stream
       ansible.builtin.dnf:
         name: "@nvidia-driver:{{ edpm_nvidia_drivers_module_version }}"
         state: present
 
-    - name: Install the nvidia CUDA driver
+    - name: Install the nvidia proprietary kernel modules
       ansible.builtin.dnf:
         name: cuda-drivers
         state: present
-      when: edpm_nvidia_drivers_install_cuda_drivers | bool
+      when: "'open' not in edpm_nvidia_drivers_module_version"
+
+    - name: Install the nvidia open kernel modules
+      ansible.builtin.dnf:
+        name: nvidia-open
+        state: present
+      when: "'open' in edpm_nvidia_drivers_module_version"
 
 - name: Install NVIDIA driver from custom URL
   when: edpm_nvidia_drivers_url != ""

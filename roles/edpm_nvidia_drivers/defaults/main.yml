@@ -3,16 +3,13 @@
 edpm_nvidia_drivers_repo_url: "https://developer.download.nvidia.com/compute/cuda/repos/rhel9/"
 
 # NVIDIA Driver module version to install from NVIDIA repo
-edpm_nvidia_drivers_module_version: "latest-dkms"
+edpm_nvidia_drivers_module_version: "open-dkms"
 
 # Custom NVIDIA driver URL (if set, driver will be installed from this URL instead of NVIDIA repo)
 edpm_nvidia_drivers_url: ""
 
 # Whether to cleanup temporary files
 edpm_nvidia_drivers_cleanup_temp_files: true
-
-# Whether to install CUDA drivers (cuda-drivers package)
-edpm_nvidia_drivers_install_cuda_drivers: true
 
 # Whether to install NVIDIA Container Tools RPM
 edpm_nvidia_drivers_install_container_tools: true

@@ -4,5 +4,6 @@
   ansible.builtin.dnf:
     name: libnvidia-ml
     state: present
-  when: "'NVIDIA-vGPU-rhel-aie' not in ansible_facts.packages"  # The AIE driver includes the management library
-
+  when: # The host driver RPMs include the management library
+    - "'NVIDIA-vGPU-rhel-aie' not in ansible_facts.packages"
+    - "'NVIDIA-vGPU-rhel' not in ansible_facts.packages"

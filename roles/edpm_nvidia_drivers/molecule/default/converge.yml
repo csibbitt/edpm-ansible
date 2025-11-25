@@ -4,6 +4,5 @@
   roles:
     - role: "edpm_nvidia_drivers"
       vars:
-        edpm_nvidia_drivers_install_cuda_drivers: false
         edpm_nvidia_drivers_install_container_tools: false
         edpm_nvidia_drivers_install_management_library: false
