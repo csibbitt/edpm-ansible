@@ -5,7 +5,7 @@ argument_specs:
     description: |
       Installs and configures NVIDIA GPU drivers on RHEL systems.
       Supports installation from NVIDIA repositories or custom URLs.
-      Can install container tools and management libraries.
+      Can install container toolkit and management libraries.
     options:
       edpm_nvidia_drivers_repo_url:
         type: str
@@ -25,14 +25,10 @@ argument_specs:
         type: bool
         default: true
         description: Whether to cleanup temporary files after installation
-      edpm_nvidia_drivers_install_container_tools:
+      edpm_nvidia_drivers_install_container_toolkit:
         type: bool
         default: true
-        description: Whether to install NVIDIA Container Tools RPM
-      edpm_nvidia_drivers_container_tools_version_release:
-        type: str
-        default: "1.17.8-1"
-        description: Version and release of NVIDIA Container Tools package to install
+        description: Whether to install NVIDIA Container Toolkit RPM
       edpm_nvidia_drivers_generate_cdi_config:
         type: bool
         default: true

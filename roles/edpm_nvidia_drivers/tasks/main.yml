@@ -32,9 +32,9 @@
   ansible.builtin.import_tasks: drivers.yaml
   when: not (_edpm_nvidia_drivers_already_installed | bool)
 
-- name: Install Container Tools
-  ansible.builtin.include_tasks: container_tools.yaml
-  when: edpm_nvidia_drivers_install_container_tools | bool
+- name: Install Container Toolkit
+  ansible.builtin.include_tasks: container_toolkit.yaml
+  when: edpm_nvidia_drivers_install_container_toolkit | bool
 
 - name: Install Management Library
   ansible.builtin.import_tasks: management_library.yaml

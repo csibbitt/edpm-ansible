@@ -11,13 +11,13 @@ edpm_nvidia_drivers_url: ""
 # Whether to cleanup temporary files
 edpm_nvidia_drivers_cleanup_temp_files: true
 
-# Whether to install NVIDIA Container Tools RPM
-edpm_nvidia_drivers_install_container_tools: true
-edpm_nvidia_drivers_container_tools_version_release: "1.17.8-1"
+# Whether to install NVIDIA Container Toolkit RPM
+edpm_nvidia_drivers_install_container_toolkit: true
 edpm_nvidia_drivers_generate_cdi_config: true
 
 # Whether to install NVIDIA Management Library RPM
 edpm_nvidia_drivers_install_management_library: true
+
 # Whether to blacklist nouveau driver
 edpm_nvidia_drivers_blacklist_nouveau: true
 

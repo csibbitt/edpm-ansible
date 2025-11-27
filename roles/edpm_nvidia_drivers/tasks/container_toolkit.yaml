@@ -1,19 +1,13 @@
 ---
-- name: Install NVIDIA Container Tools RPM
+- name: Install NVIDIA Container Toolkit RPM
   become: true
   ansible.builtin.dnf:
-    name: "nvidia-container-toolkit-{{ edpm_nvidia_drivers_container_tools_version_release }}"
+    name: nvidia-container-toolkit
     state: present
-
-- name: Check if CDI configfile exists
-  ansible.builtin.stat:
-    path: /etc/cdi/nvidia.yaml
-  register: _edpm_nvidia_drivers_cdi_config_file
 
 - name: Configure NVIDIA container runtime
   when:
     - edpm_nvidia_drivers_generate_cdi_config | bool
-    - not _edpm_nvidia_drivers_cdi_config_file.stat.exists
   become: true
   block:
     - name: Ensure CDI directory exists

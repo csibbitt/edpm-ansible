@@ -4,5 +4,4 @@
   roles:
     - role: "edpm_nvidia_drivers"
       vars:
-        edpm_nvidia_drivers_install_container_tools: false
-        edpm_nvidia_drivers_install_management_library: false
+        edpm_nvidia_drivers_generate_cdi_config: false  # This can't be done without GPU hardware present
