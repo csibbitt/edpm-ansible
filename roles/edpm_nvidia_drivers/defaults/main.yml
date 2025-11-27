@@ -21,6 +21,3 @@ edpm_nvidia_drivers_install_management_library: true
 # Whether to blacklist nouveau driver
 edpm_nvidia_drivers_blacklist_nouveau: true
 
-# Whether to force install NVIDIA driver (NOTE: THIS IS FOR DEBUGGING ONLY AND IS NOT EXPECTED TO WORK [yet?])
-edpm_nvidia_drivers_force_install: false
-

@@ -13,7 +13,7 @@ argument_specs:
         description: NVIDIA repository URL for driver installation
       edpm_nvidia_drivers_module_version:
         type: str
-        default: "latest-dkms"
+        default: "open-dkms"
         description: NVIDIA Driver module version to install from NVIDIA repo
       edpm_nvidia_drivers_url:
         type: str

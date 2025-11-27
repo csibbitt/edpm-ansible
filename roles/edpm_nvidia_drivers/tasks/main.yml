@@ -30,7 +30,7 @@
 
 - name: Driver installation
   ansible.builtin.import_tasks: drivers.yaml
-  when: (not (_edpm_nvidia_drivers_already_installed | bool)) or (edpm_nvidia_drivers_force_install | bool)
+  when: not (_edpm_nvidia_drivers_already_installed | bool)
 
 - name: Install Container Tools
   ansible.builtin.include_tasks: container_tools.yaml
