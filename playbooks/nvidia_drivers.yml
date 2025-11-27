@@ -17,4 +17,4 @@
 
     - name: Deploy nvidia drivers
       ansible.builtin.import_role:
-        name: edpm_nvidia_drivers #osp.edpm.
+        name: osp.edpm.edpm_nvidia_drivers
