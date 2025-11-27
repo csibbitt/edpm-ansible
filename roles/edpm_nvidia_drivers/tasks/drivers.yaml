@@ -128,4 +128,3 @@
 - name: Refresh package facts after driver installation
   ansible.builtin.package_facts:
     manager: rpm
-

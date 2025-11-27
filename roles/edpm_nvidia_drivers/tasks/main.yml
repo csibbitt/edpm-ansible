@@ -20,17 +20,8 @@
     gpgkey: "{{ edpm_nvidia_drivers_repo_url }}/$basearch/D42D0685.pub"
     exclude: nvidia-kmod-common
 
-- name: Check for installed nvidia-driver RPM
-  ansible.builtin.package_facts:
-    manager: rpm
-
-- name: Check if nvidia-driver installation is needed
-  ansible.builtin.set_fact:
-    _edpm_nvidia_drivers_already_installed: "{{ 'nvidia-driver' in ansible_facts.packages or 'NVIDIA-vGPU-rhel-aie' in ansible_facts.packages }}"
-
 - name: Driver installation
   ansible.builtin.import_tasks: drivers.yaml
-  when: not (_edpm_nvidia_drivers_already_installed | bool)
 
 - name: Install Container Toolkit
   ansible.builtin.include_tasks: container_toolkit.yaml
